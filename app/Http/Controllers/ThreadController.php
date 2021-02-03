@@ -3,9 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\{
+    Thread,
+    User
+    };
+use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Support\Str;
 
 class ThreadController extends Controller
 {
+
+    private $thread;
+
+    public function __construct(Thread $thread)
+    {
+        $this->thread = $thread;
+
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +28,9 @@ class ThreadController extends Controller
      */
     public function index()
     {
-        //
+        $threads = $this->thread->orderBy('created_at', 'DESC')->paginate(5);
+
+        return view('threads.index', compact('threads'));
     }
 
     /**
@@ -23,7 +40,7 @@ class ThreadController extends Controller
      */
     public function create()
     {
-        //
+        return view('threads.create');
     }
 
     /**
@@ -34,51 +51,82 @@ class ThreadController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+
+            $thread = $request->all();
+            $thread['slug'] = Str::slug($thread['title']);
+
+            $user = User::find(1);
+            $user->threads()->create($thread);
+
+        } catch(Exception $e){
+            dd($e->getMessage());
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  string $thread
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($thread)
     {
-        //
+        $thread = $this->thread->whereSlug($thread)->first();
+
+        if(!$thread) return redirect()->route('threads.index');
+
+        return view('threads.show', compact('thread'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  string $thread
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($thread)
     {
-        //
+        $thread = $this->thread->whereSlug($thread)->first();
+        return view('threads.edit', compact('thread'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  string thread
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $thread)
     {
-        //
+        try{
+            $thread =  $this->thread->whereSlug($thread)->first();
+            $thread->update($request->all());
+
+            dd('Tópico atualizado com sucesso');
+
+        } catch(Exception $e){
+            dd($e->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  string $thread
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($thread)
     {
-        //
+        try{
+            $thread =  $this->thread->whereSlug($thread)->first();
+            $thread->delete();
+
+            dd('Tópico removido com sucesso');
+
+        } catch(Exception $e){
+            dd($e->getMessage());
+        }
     }
 }
