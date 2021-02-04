@@ -36,6 +36,37 @@
         </div>
       </div>
     </div>
+
+    <div class="col-8 mt-3">
+
+      <h5>Respostas</h5>
+      
+      <hr>
+
+      @foreach ($replies as $Reply)
+        <div class="card">
+          <div class="card-body">
+            {{ $reply->reply}}
+          </div>
+        </div>
+          
+      @endforeach
+    </div>
+
+    <div class="col-8">
+      
+
+        <form action="{{ route('replies.store')}}" method="post">
+          @csrf
+          <div class="form-group">
+            <input type="hidden" name="thread_id" value="{{ $thread->id }}">
+            <label for="">Responder</label>
+            <textarea name="reply" class="form-control" cols="30" rows="5"></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Responder</button>
+        </form>
+
+    </div>
   </div>
     
 @endsection
