@@ -22,10 +22,15 @@
 
             <a href="{{ route('threads.edit', $thread->slug) }}" class="btn btn-sm btn-primary">Editar</a>
 
-            <form action="{{ route('threads.destroy', $thread->slug) }}" method="post">
+            <a href="#" class="btn btn-sm btn-danger"
+              onclick="event.preventDefault(); document.querySelector('form.thread-rm').submit();">
+              Excluir
+            </a>
+            <form action="{{ route('threads.destroy', $thread->slug) }}" class="thread-rm" 
+              style="display: none;" method="post">
               @csrf
               @method('DELETE')
-              <button class="btn btn-sm btn-danger">Excluir</button>
+              
             </form>
             
         </div>
