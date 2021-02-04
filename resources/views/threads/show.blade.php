@@ -37,25 +37,29 @@
       </div>
     </div>
 
+    <!-- Respostas -->
     <div class="col-8 mt-3">
 
       <h5>Respostas</h5>
-      
       <hr>
-
-      @foreach ($replies as $Reply)
+      
+      @foreach ($thread->replies as $reply)
         <div class="card">
           <div class="card-body">
             {{ $reply->reply}}
+          </div>
+          <div class="card-footer">
+            <small>Respondido por {{$reply->user->name}} a {{ $replay->created_at->diffForHumans() }}</small>  
           </div>
         </div>
           
       @endforeach
     </div>
+    <!--./respostas-->
 
+    <!-- Responder -->
     <div class="col-8">
       
-
         <form action="{{ route('replies.store')}}" method="post">
           @csrf
           <div class="form-group">
@@ -67,6 +71,7 @@
         </form>
 
     </div>
+    <!-- ./Responder -->
   </div>
     
 @endsection

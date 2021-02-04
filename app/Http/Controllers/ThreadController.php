@@ -57,10 +57,16 @@ class ThreadController extends Controller
             $thread['slug'] = Str::slug($thread['title']);
 
             $user = User::find(1);
-            $user->threads()->create($thread);
+            $thread = $user->threads()->create($thread);
 
-        } catch(Exception $e){
-            dd($e->getMessage());
+            flash('Tópico criado com sucesso')->success();
+            return redirect()->route('threads.show', $thread->slug);
+
+        } catch(\Exception $e){
+
+            $message = env('APP_DEBUG') ? $e->getMessage() : 'Erro ao processar sua requisição';
+            flash($message)->warning();
+            return redirect()->back();
         }
     }
 
@@ -104,10 +110,14 @@ class ThreadController extends Controller
             $thread =  $this->thread->whereSlug($thread)->first();
             $thread->update($request->all());
 
-            dd('Tópico atualizado com sucesso');
+            flash('Tópico atualizado com sucesso')->success();
+            return redirect()->route('threads.show', $thread->slug);
 
-        } catch(Exception $e){
-            dd($e->getMessage());
+        } catch(\Exception $e){
+            
+            $message = env('APP_DEBUG') ? $e->getMessage() : 'Erro ao processar sua requisição';
+            flash($message)->warning();
+            return redirect()->back();
         }
     }
 
@@ -123,10 +133,15 @@ class ThreadController extends Controller
             $thread =  $this->thread->whereSlug($thread)->first();
             $thread->delete();
 
-            dd('Tópico removido com sucesso');
+            flash('Tópico removido com sucesso')->success();
 
-        } catch(Exception $e){
-            dd($e->getMessage());
+            return redirect()->route('threads.index');
+
+        } catch(\Exception $e){
+            
+            $message = env('APP_DEBUG') ? $e->getMessage() : 'Erro ao processar sua requisição';
+            flash($message)->warning();
+            return redirect()->back();
         }
     }
 }
